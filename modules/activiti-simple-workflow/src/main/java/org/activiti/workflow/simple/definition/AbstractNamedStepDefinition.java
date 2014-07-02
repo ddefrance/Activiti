@@ -12,7 +12,9 @@
  */
 package org.activiti.workflow.simple.definition;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -33,6 +35,7 @@ public abstract class AbstractNamedStepDefinition implements StepDefinition, Nam
   protected String description;
   protected boolean startsWithPrevious;
   protected Map<String, Object> parameters = new HashMap<String, Object>();
+  protected List<BoundaryEventStepDefinition> boundaryEvents = new ArrayList<BoundaryEventStepDefinition>();
 
   public String getId() {
     return id;
@@ -77,7 +80,15 @@ public abstract class AbstractNamedStepDefinition implements StepDefinition, Nam
   	this.parameters = parameters;
   }
   
-  public abstract StepDefinition clone();
+  public List<BoundaryEventStepDefinition> getBoundaryEvents() {
+    return boundaryEvents;
+}
+
+public void setBoundaryEvents(List<BoundaryEventStepDefinition> boundaryEvents) {
+    this.boundaryEvents = boundaryEvents;
+}
+
+public abstract StepDefinition clone();
   
   public abstract void setValues(StepDefinition otherDefinition);
 }

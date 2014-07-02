@@ -15,6 +15,8 @@ package org.activiti.workflow.simple.converter.step;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.activiti.bpmn.model.Activity;
+import org.activiti.bpmn.model.BoundaryEvent;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.FormProperty;
@@ -23,6 +25,7 @@ import org.activiti.bpmn.model.Process;
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.workflow.simple.converter.ConversionConstants;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
+import org.activiti.workflow.simple.definition.BoundaryEventStepDefinition;
 import org.activiti.workflow.simple.definition.StepDefinition;
 import org.activiti.workflow.simple.definition.form.DatePropertyDefinition;
 import org.activiti.workflow.simple.definition.form.FormDefinition;
@@ -171,6 +174,24 @@ public abstract class BaseStepDefinitionConverter<U extends StepDefinition, T> i
     }
     
     return formProperties;
+  }
+  
+  protected List<BoundaryEvent> convertBoundaryEvents(WorkflowDefinitionConversion conversion, Activity task, List<BoundaryEventStepDefinition> boundaryStepDefinitions) {
+      List<BoundaryEvent> events = new ArrayList<BoundaryEvent>();
+      for (BoundaryEventStepDefinition stepDefinition : boundaryStepDefinitions) {
+          BoundaryEvent event = new BoundaryEvent();
+          event.setId(ConversionConstants.BOUNDARY_ID_PREFIX + "_" + stepDefinition.getName());
+          event.setName(stepDefinition.getName());
+          event.setAttachedToRefId(task.getId());
+          event.setAttachedToRef(task);
+          event.setCancelActivity(stepDefinition.isCancelActivity());
+          event.setEventDefinitions(stepDefinition.getEventDefinitions());
+          
+          conversion.getProcess().addFlowElement(event);
+          events.add(event);
+      }
+      
+      return events;
   }
   
 }

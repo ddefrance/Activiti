@@ -90,6 +90,9 @@ public class HumanStepDefinitionConverter extends BaseStepDefinitionConverter<Hu
       	userTask.setFormKey(formDefinition.getFormKey());
       }
     }
+    
+    // Boundary Events
+    userTask.setBoundaryEvents(convertBoundaryEvents(conversion, userTask, humanStepDefinition.getBoundaryEvents()));
 
     return userTask;
   }

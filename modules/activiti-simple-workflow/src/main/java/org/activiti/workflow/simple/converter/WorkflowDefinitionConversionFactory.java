@@ -24,6 +24,8 @@ import org.activiti.workflow.simple.converter.step.FeedbackStepDefinitionConvert
 import org.activiti.workflow.simple.converter.step.HumanStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.ParallelStepsDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.ScriptStepDefinitionConverter;
+import org.activiti.workflow.simple.converter.step.SequenceFlowStepDefinitionConverter;
+import org.activiti.workflow.simple.converter.step.ServiceStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.StepDefinitionConverter;
 import org.activiti.workflow.simple.definition.StepDefinition;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
@@ -63,6 +65,8 @@ public class WorkflowDefinitionConversionFactory {
     converters.add(new FeedbackStepDefinitionConverter());
     converters.add(new ScriptStepDefinitionConverter());
     converters.add(new DelayStepDefinitionConverter());
+    converters.add(new ServiceStepDefinitionConverter());
+    converters.add(new SequenceFlowStepDefinitionConverter());
     setDefaultStepDefinitionConverters(converters);
   }
   
