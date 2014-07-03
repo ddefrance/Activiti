@@ -34,6 +34,7 @@ public abstract class AbstractNamedStepDefinition implements StepDefinition, Nam
 	protected String name;
   protected String description;
   protected boolean startsWithPrevious;
+  protected boolean endsParallel;
   protected Map<String, Object> parameters = new HashMap<String, Object>();
   protected List<BoundaryEventStepDefinition> boundaryEvents = new ArrayList<BoundaryEventStepDefinition>();
 
@@ -69,7 +70,15 @@ public abstract class AbstractNamedStepDefinition implements StepDefinition, Nam
     this.startsWithPrevious = startsWithPrevious;
   }
   
-  @Override
+  public boolean isEndsParallel() {
+    return endsParallel;
+}
+
+public void setEndsParallel(boolean endsParallel) {
+    this.endsParallel = endsParallel;
+}
+
+@Override
   @JsonSerialize(include=Inclusion.NON_EMPTY)
   public Map<String, Object> getParameters() {
   	return parameters;

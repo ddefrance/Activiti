@@ -180,7 +180,11 @@ public abstract class BaseStepDefinitionConverter<U extends StepDefinition, T> i
       List<BoundaryEvent> events = new ArrayList<BoundaryEvent>();
       for (BoundaryEventStepDefinition stepDefinition : boundaryStepDefinitions) {
           BoundaryEvent event = new BoundaryEvent();
-          event.setId(ConversionConstants.BOUNDARY_ID_PREFIX + "_" + stepDefinition.getName());
+          if (stepDefinition.getId() != null) {
+              event.setId(stepDefinition.getId());
+          } else {
+              event.setId(ConversionConstants.BOUNDARY_ID_PREFIX + "_" + stepDefinition.getName());
+          }
           event.setName(stepDefinition.getName());
           event.setAttachedToRefId(task.getId());
           event.setAttachedToRef(task);

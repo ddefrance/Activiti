@@ -19,4 +19,6 @@ public interface NamedStepDefinition {
 	
 	String getDescription();
 	void setDescription(String description);
+	
+	boolean isEndsParallel();
 }

@@ -20,6 +20,7 @@ import org.activiti.bpmn.model.ParallelGateway;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversionFactory;
 import org.activiti.workflow.simple.definition.ListStepDefinition;
+import org.activiti.workflow.simple.definition.NamedStepDefinition;
 import org.activiti.workflow.simple.definition.ParallelStepsDefinition;
 import org.activiti.workflow.simple.definition.StepDefinition;
 
@@ -59,6 +60,8 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
     List<FlowElement> endElements = new ArrayList<FlowElement>();
     for (ListStepDefinition<ParallelStepsDefinition> stepListDefinition : parallelStepsDefinition.getStepList()) {
       
+      FlowElement lastElement = null;
+      boolean foundEnd = false;
       for (int i = 0; i < stepListDefinition.getSteps().size(); i++) {
         if (i == 0) {
           conversion.setSequenceflowGenerationEnabled(false);
@@ -72,9 +75,24 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
           addSequenceFlow(conversion, forkGateway.getId(), flowElement.getId());
         }
         
-        if ((i + 1) == stepListDefinition.getSteps().size()) {
-          endElements.add(flowElement);
+        // Do not assume the last step is the one to end a parallel (conditions, boundary events, etc).
+        // Look for the indicator.
+        if (NamedStepDefinition.class.isAssignableFrom(step.getClass())) {
+            boolean end = ((NamedStepDefinition) step).isEndsParallel();
+            if (end) {
+                // We found an explicitly marked end element, so add it and mark that we found it.
+                endElements.add(flowElement);
+                foundEnd = true;
+            }
         }
+        
+        // Update the last element.
+        lastElement = flowElement;
+        
+      }
+      // If we didn't find an explicitly marked last element, go ahead and add the final flow element
+      if (!foundEnd) {
+          endElements.add(lastElement);
       }
     }
     
