@@ -47,7 +47,7 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
   protected ParallelGateway createProcessArtifact(ParallelStepsDefinition parallelStepsDefinition, WorkflowDefinitionConversion conversion) {
 
     // First parallel gateway
-    ParallelGateway forkGateway = createParallelGateway(conversion);
+    ParallelGateway forkGateway = createParallelGateway(parallelStepsDefinition, conversion);
     
     // Sequence flow from last activity to first gateway
     addSequenceFlow(conversion, conversion.getLastActivityId(), forkGateway.getId());
@@ -81,7 +81,7 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
     conversion.setSequenceflowGenerationEnabled(false);
     
     // Second parallel gateway
-    ParallelGateway joinGateway = createParallelGateway(conversion);
+    ParallelGateway joinGateway = createParallelGateway(null, conversion);
     conversion.setLastActivityId(joinGateway.getId());
     
     conversion.setSequenceflowGenerationEnabled(true);
@@ -101,9 +101,13 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
     return forkGateway;
   }
   
-  protected ParallelGateway createParallelGateway(WorkflowDefinitionConversion conversion) {
+  protected ParallelGateway createParallelGateway(ParallelStepsDefinition parallelStepsDefinition, WorkflowDefinitionConversion conversion) {
     ParallelGateway parallelGateway = new ParallelGateway();
-    parallelGateway.setId(conversion.getUniqueNumberedId(PARALLEL_GATEWAY_PREFIX));
+    if (parallelStepsDefinition != null && parallelStepsDefinition.getId() != null) {
+        parallelGateway.setId(parallelStepsDefinition.getId());
+    } else {
+        parallelGateway.setId(conversion.getUniqueNumberedId(PARALLEL_GATEWAY_PREFIX));
+    }
     conversion.getProcess().addFlowElement(parallelGateway);
     return parallelGateway;
   }

@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize.Inclusion;
 public class SequenceFlowStepDefinition implements StepDefinition {
 
     protected String              id;
+    protected String              name;
     protected String              conditionExpression;
     protected String              sourceRef;
     protected String              targetRef;
@@ -48,6 +49,14 @@ public class SequenceFlowStepDefinition implements StepDefinition {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getConditionExpression() {
@@ -101,6 +110,7 @@ public class SequenceFlowStepDefinition implements StepDefinition {
         }
         SequenceFlowStepDefinition stepDefinition = (SequenceFlowStepDefinition) otherDefinition;
         setId(stepDefinition.getId());
+        setName(stepDefinition.getName());
         setConditionExpression(stepDefinition.getConditionExpression());
         setSourceRef(stepDefinition.getSourceRef());
         setTargetRef(stepDefinition.getTargetRef());

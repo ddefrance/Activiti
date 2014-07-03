@@ -43,12 +43,15 @@ public class ServiceStepDefinitionConverter extends BaseStepDefinitionConverter<
         serviceTask.setFieldExtensions(stepDefinition.getFieldExtensions());
         serviceTask.setCustomProperties(stepDefinition.getCustomProperties());
 
-        
-        conversion.setUpdateLastActivityEnabled(false);
-        
+        if (!stepDefinition.isUpdateLastActivity()) {
+            conversion.setUpdateLastActivityEnabled(false);
+        }
+
         addFlowElement(conversion, serviceTask, false);
-        
-        conversion.setUpdateLastActivityEnabled(true);
+
+        if (!stepDefinition.isUpdateLastActivity()) {
+            conversion.setUpdateLastActivityEnabled(true);
+        }
 
         return serviceTask;
     }

@@ -34,6 +34,7 @@ public class SequenceFlowStepDefinitionConverter extends
 
         SequenceFlow flow = addSequenceFlow(conversion, stepDefinition.getSourceRef(), stepDefinition.getTargetRef(),
                 stepDefinition.getConditionExpression());
+        flow.setName(stepDefinition.getName());
         return flow;
     }
 

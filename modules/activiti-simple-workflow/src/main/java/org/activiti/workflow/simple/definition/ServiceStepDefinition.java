@@ -34,8 +34,9 @@ public class ServiceStepDefinition extends AbstractNamedStepDefinition {
     protected String               type;
     protected String               operationRef;
     protected String               extensionId;
-    protected List<FieldExtension> fieldExtensions  = new ArrayList<FieldExtension>();
-    protected List<CustomProperty> customProperties = new ArrayList<CustomProperty>();
+    protected List<FieldExtension> fieldExtensions    = new ArrayList<FieldExtension>();
+    protected List<CustomProperty> customProperties   = new ArrayList<CustomProperty>();
+    protected boolean              updateLastActivity = false;
 
     public String getImplementation() {
         return implementation;
@@ -103,6 +104,14 @@ public class ServiceStepDefinition extends AbstractNamedStepDefinition {
 
     public boolean isExtended() {
         return extensionId != null && !extensionId.isEmpty();
+    }
+
+    public boolean isUpdateLastActivity() {
+        return updateLastActivity;
+    }
+
+    public void setUpdateLastActivity(boolean updateLastActivity) {
+        this.updateLastActivity = updateLastActivity;
     }
 
     @Override

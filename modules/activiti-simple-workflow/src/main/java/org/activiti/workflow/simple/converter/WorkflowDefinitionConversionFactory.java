@@ -20,6 +20,7 @@ import org.activiti.workflow.simple.converter.listener.DefaultWorkflowDefinition
 import org.activiti.workflow.simple.converter.listener.WorkflowDefinitionConversionListener;
 import org.activiti.workflow.simple.converter.step.ChoiceStepsDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.DelayStepDefinitionConverter;
+import org.activiti.workflow.simple.converter.step.ExclusiveGatewayStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.FeedbackStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.HumanStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.ParallelStepsDefinitionConverter;
@@ -67,6 +68,7 @@ public class WorkflowDefinitionConversionFactory {
     converters.add(new DelayStepDefinitionConverter());
     converters.add(new ServiceStepDefinitionConverter());
     converters.add(new SequenceFlowStepDefinitionConverter());
+    converters.add(new ExclusiveGatewayStepDefinitionConverter());
     setDefaultStepDefinitionConverters(converters);
   }
   
