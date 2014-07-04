@@ -50,8 +50,13 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
     // First parallel gateway
     ParallelGateway forkGateway = createParallelGateway(parallelStepsDefinition, conversion);
     
+    boolean isNested = parallelStepsDefinition.getParallelParentId() != null;
+    
     // Sequence flow from last activity to first gateway
-    addSequenceFlow(conversion, conversion.getLastActivityId(), forkGateway.getId());
+    String lastActivitiesLane = conversion.getLaneMap().get(conversion.getLastActivityId());
+    if (lastActivitiesLane == null || lastActivitiesLane.equals(parallelStepsDefinition.getParallelParentId())) {
+        addSequenceFlow(conversion, conversion.getLastActivityId(), forkGateway.getId());
+    }
     conversion.setLastActivityId(forkGateway.getId());
 
     // Convert all other steps, disabling activity id updates which makes all 
@@ -62,6 +67,13 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
       
       FlowElement lastElement = null;
       boolean foundEnd = false;
+      String laneId = null;
+      if (!isNested) {
+          laneId = conversion.getUniqueNumberedId("lane");
+      } else {
+          laneId = parallelStepsDefinition.getParallelParentId();
+      }
+      
       for (int i = 0; i < stepListDefinition.getSteps().size(); i++) {
         if (i == 0) {
           conversion.setSequenceflowGenerationEnabled(false);
@@ -69,7 +81,24 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
           conversion.setSequenceflowGenerationEnabled(true);
         }
         StepDefinition step = stepListDefinition.getSteps().get(i);
+        
+        if (ParallelStepsDefinition.class.isAssignableFrom(step.getClass())) {
+            ((ParallelStepsDefinition) step).setParallelParentId(laneId);
+        }
         FlowElement flowElement = (FlowElement) conversionFactory.getStepConverterFor(step).convertStepDefinition(step, conversion);
+        
+        if (ParallelStepsDefinition.class.isAssignableFrom(step.getClass())) {
+            ((ParallelStepsDefinition) step).setParallelParentId(null);
+        }
+        
+        // Add the lane Ids for each element
+        conversion.getLaneMap().put(flowElement.getId(), laneId);
+        // If it's a parallel gateway, add the join gateway as well.
+        if (ParallelGateway.class.isAssignableFrom(flowElement.getClass())) {
+            ParallelGateway join = ((ParallelGateway) flowElement).getJoinGateway();
+            conversion.getLaneMap().put(join.getId(), laneId);
+        }
+       
         
         if (i == 0) {
           addSequenceFlow(conversion, forkGateway.getId(), flowElement.getId());
@@ -90,6 +119,7 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
         lastElement = flowElement;
         
       }
+      
       // If we didn't find an explicitly marked last element, go ahead and add the final flow element
       if (!foundEnd) {
           endElements.add(lastElement);
