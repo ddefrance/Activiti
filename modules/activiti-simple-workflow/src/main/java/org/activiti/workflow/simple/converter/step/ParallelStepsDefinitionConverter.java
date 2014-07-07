@@ -95,8 +95,8 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
         conversion.getLaneMap().put(flowElement.getId(), laneId);
         // If it's a parallel gateway, add the join gateway as well.
         if (ParallelGateway.class.isAssignableFrom(flowElement.getClass())) {
-            ParallelGateway join = ((ParallelGateway) flowElement).getJoinGateway();
-            conversion.getLaneMap().put(join.getId(), laneId);
+            String joinId = conversion.getParallelForkJoinMap().get(flowElement.getId());
+            conversion.getLaneMap().put(joinId, laneId);
         }
        
         
@@ -134,17 +134,18 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
     
     conversion.setSequenceflowGenerationEnabled(true);
     
+    // Store the relationship between the fork and the join
+    conversion.getParallelForkJoinMap().put(forkGateway.getId(), joinGateway.getId());
+    
     // Create sequence flow from all generated steps to the second gateway
     for (FlowElement endElement : endElements) {
         if (ParallelGateway.class.isAssignableFrom(endElement.getClass())) {
-            ParallelGateway join = ((ParallelGateway) endElement).getJoinGateway();
-            addSequenceFlow(conversion, join.getId(), joinGateway.getId());
+            String joinId = conversion.getParallelForkJoinMap().get(endElement.getId());
+            addSequenceFlow(conversion, joinId, joinGateway.getId());
         } else {
             addSequenceFlow(conversion, endElement.getId(), joinGateway.getId());
         }
     }
-    
-    forkGateway.setJoinGateway(joinGateway);
     
     return forkGateway;
   }

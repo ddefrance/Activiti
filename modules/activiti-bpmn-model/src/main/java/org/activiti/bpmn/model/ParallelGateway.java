@@ -17,9 +17,6 @@ package org.activiti.bpmn.model;
  */
 public class ParallelGateway extends Gateway {
 
-    private ParallelGateway joinGateway;
-    private int level;
-
     public ParallelGateway clone() {
         ParallelGateway clone = new ParallelGateway();
         clone.setValues(this);
@@ -30,19 +27,4 @@ public class ParallelGateway extends Gateway {
         super.setValues(otherElement);
     }
 
-    public ParallelGateway getJoinGateway() {
-        return joinGateway;
-    }
-
-    public void setJoinGateway(ParallelGateway joinGateway) {
-        this.joinGateway = joinGateway;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
 }

@@ -59,6 +59,7 @@ public class WorkflowDefinitionConversion {
   protected WorkflowDefinitionConversionFactory conversionFactory;
   protected String lastActivityId;
   protected Map<String, String> laneMap;
+  protected Map<String, String> parallelForkJoinMap;
   protected HashMap<String, Integer> incrementalIdMapping;
   
   // Properties to influence the conversion
@@ -88,6 +89,7 @@ public class WorkflowDefinitionConversion {
     this.incrementalIdMapping = new HashMap<String, Integer>();
     this.additionalArtifacts = new HashMap<String, Object>();
     this.laneMap =  new HashMap<String, String>();
+    this.parallelForkJoinMap =  new HashMap<String, String>();
     
     // Create new process
     bpmnModel = new BpmnModel();
@@ -172,6 +174,14 @@ public Map<String, String> getLaneMap() {
 
 public void setLaneMap(Map<String, String> laneMap) {
     this.laneMap = laneMap;
+}
+
+public Map<String, String> getParallelForkJoinMap() {
+    return parallelForkJoinMap;
+}
+
+public void setParallelForkJoinMap(Map<String, String> parallelForkJoinMap) {
+    this.parallelForkJoinMap = parallelForkJoinMap;
 }
 
 public BpmnModel getBpmnModel() {
