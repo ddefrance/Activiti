@@ -50,7 +50,11 @@ public class HumanStepDefinitionConverter extends BaseStepDefinitionConverter<Hu
     // TODO: validate and throw exception on missing properties
     
     UserTask userTask = new UserTask();
-    userTask.setId(conversion.getUniqueNumberedId(ConversionConstants.USER_TASK_ID_PREFIX));
+    if (humanStepDefinition.getId() != null) {
+        userTask.setId(humanStepDefinition.getId());
+    } else {
+        userTask.setId(conversion.getUniqueNumberedId(ConversionConstants.USER_TASK_ID_PREFIX));
+    }
     userTask.setName(humanStepDefinition.getName());
     userTask.setDocumentation(humanStepDefinition.getDescription());
 
@@ -90,6 +94,9 @@ public class HumanStepDefinitionConverter extends BaseStepDefinitionConverter<Hu
       	userTask.setFormKey(formDefinition.getFormKey());
       }
     }
+    
+    // Boundary Events
+    userTask.setBoundaryEvents(convertBoundaryEvents(conversion, userTask, humanStepDefinition.getBoundaryEvents()));
 
     return userTask;
   }

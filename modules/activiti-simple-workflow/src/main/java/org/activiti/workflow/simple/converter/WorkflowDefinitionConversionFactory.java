@@ -20,10 +20,13 @@ import org.activiti.workflow.simple.converter.listener.DefaultWorkflowDefinition
 import org.activiti.workflow.simple.converter.listener.WorkflowDefinitionConversionListener;
 import org.activiti.workflow.simple.converter.step.ChoiceStepsDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.DelayStepDefinitionConverter;
+import org.activiti.workflow.simple.converter.step.ExclusiveGatewayStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.FeedbackStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.HumanStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.ParallelStepsDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.ScriptStepDefinitionConverter;
+import org.activiti.workflow.simple.converter.step.SequenceFlowStepDefinitionConverter;
+import org.activiti.workflow.simple.converter.step.ServiceStepDefinitionConverter;
 import org.activiti.workflow.simple.converter.step.StepDefinitionConverter;
 import org.activiti.workflow.simple.definition.StepDefinition;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
@@ -63,6 +66,9 @@ public class WorkflowDefinitionConversionFactory {
     converters.add(new FeedbackStepDefinitionConverter());
     converters.add(new ScriptStepDefinitionConverter());
     converters.add(new DelayStepDefinitionConverter());
+    converters.add(new ServiceStepDefinitionConverter());
+    converters.add(new SequenceFlowStepDefinitionConverter());
+    converters.add(new ExclusiveGatewayStepDefinitionConverter());
     setDefaultStepDefinitionConverters(converters);
   }
   

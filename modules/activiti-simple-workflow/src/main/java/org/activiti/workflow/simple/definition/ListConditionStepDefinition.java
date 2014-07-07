@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.activiti.workflow.simple.exception.SimpleWorkflowException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize.Inclusion;
@@ -134,4 +135,10 @@ public class ListConditionStepDefinition<T> extends AbstractStepDefinitionContai
   public void setParameters(Map<String,Object> parameters) {
     this.parameters = parameters;
   }
+
+@Override
+@JsonIgnore
+public boolean isEndsParallel() {
+    return false;
+}
 }

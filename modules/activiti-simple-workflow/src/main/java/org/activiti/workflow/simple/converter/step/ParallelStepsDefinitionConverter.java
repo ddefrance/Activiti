@@ -20,6 +20,7 @@ import org.activiti.bpmn.model.ParallelGateway;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversionFactory;
 import org.activiti.workflow.simple.definition.ListStepDefinition;
+import org.activiti.workflow.simple.definition.NamedStepDefinition;
 import org.activiti.workflow.simple.definition.ParallelStepsDefinition;
 import org.activiti.workflow.simple.definition.StepDefinition;
 
@@ -47,10 +48,15 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
   protected ParallelGateway createProcessArtifact(ParallelStepsDefinition parallelStepsDefinition, WorkflowDefinitionConversion conversion) {
 
     // First parallel gateway
-    ParallelGateway forkGateway = createParallelGateway(conversion);
+    ParallelGateway forkGateway = createParallelGateway(parallelStepsDefinition, conversion);
+    
+    boolean isNested = parallelStepsDefinition.getParallelParentId() != null;
     
     // Sequence flow from last activity to first gateway
-    addSequenceFlow(conversion, conversion.getLastActivityId(), forkGateway.getId());
+    String lastActivitiesLane = conversion.getLaneMap().get(conversion.getLastActivityId());
+    if (lastActivitiesLane == null || lastActivitiesLane.equals(parallelStepsDefinition.getParallelParentId())) {
+        addSequenceFlow(conversion, conversion.getLastActivityId(), forkGateway.getId());
+    }
     conversion.setLastActivityId(forkGateway.getId());
 
     // Convert all other steps, disabling activity id updates which makes all 
@@ -59,6 +65,15 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
     List<FlowElement> endElements = new ArrayList<FlowElement>();
     for (ListStepDefinition<ParallelStepsDefinition> stepListDefinition : parallelStepsDefinition.getStepList()) {
       
+      FlowElement lastElement = null;
+      boolean foundEnd = false;
+      String laneId = null;
+      if (!isNested) {
+          laneId = conversion.getUniqueNumberedId("lane");
+      } else {
+          laneId = parallelStepsDefinition.getParallelParentId();
+      }
+      
       for (int i = 0; i < stepListDefinition.getSteps().size(); i++) {
         if (i == 0) {
           conversion.setSequenceflowGenerationEnabled(false);
@@ -66,44 +81,82 @@ public class ParallelStepsDefinitionConverter extends BaseStepDefinitionConverte
           conversion.setSequenceflowGenerationEnabled(true);
         }
         StepDefinition step = stepListDefinition.getSteps().get(i);
+        
+        if (ParallelStepsDefinition.class.isAssignableFrom(step.getClass())) {
+            ((ParallelStepsDefinition) step).setParallelParentId(laneId);
+        }
         FlowElement flowElement = (FlowElement) conversionFactory.getStepConverterFor(step).convertStepDefinition(step, conversion);
+        
+        if (ParallelStepsDefinition.class.isAssignableFrom(step.getClass())) {
+            ((ParallelStepsDefinition) step).setParallelParentId(null);
+        }
+        
+        // Add the lane Ids for each element
+        conversion.getLaneMap().put(flowElement.getId(), laneId);
+        // If it's a parallel gateway, add the join gateway as well.
+        if (ParallelGateway.class.isAssignableFrom(flowElement.getClass())) {
+            String joinId = conversion.getParallelForkJoinMap().get(flowElement.getId());
+            conversion.getLaneMap().put(joinId, laneId);
+        }
+       
         
         if (i == 0) {
           addSequenceFlow(conversion, forkGateway.getId(), flowElement.getId());
         }
         
-        if ((i + 1) == stepListDefinition.getSteps().size()) {
-          endElements.add(flowElement);
+        // Do not assume the last step is the one to end a parallel (conditions, boundary events, etc).
+        // Look for the indicator.
+        if (NamedStepDefinition.class.isAssignableFrom(step.getClass())) {
+            boolean end = ((NamedStepDefinition) step).isEndsParallel();
+            if (end) {
+                // We found an explicitly marked end element, so add it and mark that we found it.
+                endElements.add(flowElement);
+                foundEnd = true;
+            }
         }
+        
+        // Update the last element.
+        lastElement = flowElement;
+        
+      }
+      
+      // If we didn't find an explicitly marked last element, go ahead and add the final flow element
+      if (!foundEnd) {
+          endElements.add(lastElement);
       }
     }
     
     conversion.setSequenceflowGenerationEnabled(false);
     
     // Second parallel gateway
-    ParallelGateway joinGateway = createParallelGateway(conversion);
+    ParallelGateway joinGateway = createParallelGateway(null, conversion);
     conversion.setLastActivityId(joinGateway.getId());
     
     conversion.setSequenceflowGenerationEnabled(true);
     
+    // Store the relationship between the fork and the join
+    conversion.getParallelForkJoinMap().put(forkGateway.getId(), joinGateway.getId());
+    
     // Create sequence flow from all generated steps to the second gateway
     for (FlowElement endElement : endElements) {
         if (ParallelGateway.class.isAssignableFrom(endElement.getClass())) {
-            ParallelGateway join = ((ParallelGateway) endElement).getJoinGateway();
-            addSequenceFlow(conversion, join.getId(), joinGateway.getId());
+            String joinId = conversion.getParallelForkJoinMap().get(endElement.getId());
+            addSequenceFlow(conversion, joinId, joinGateway.getId());
         } else {
             addSequenceFlow(conversion, endElement.getId(), joinGateway.getId());
         }
     }
     
-    forkGateway.setJoinGateway(joinGateway);
-    
     return forkGateway;
   }
   
-  protected ParallelGateway createParallelGateway(WorkflowDefinitionConversion conversion) {
+  protected ParallelGateway createParallelGateway(ParallelStepsDefinition parallelStepsDefinition, WorkflowDefinitionConversion conversion) {
     ParallelGateway parallelGateway = new ParallelGateway();
-    parallelGateway.setId(conversion.getUniqueNumberedId(PARALLEL_GATEWAY_PREFIX));
+    if (parallelStepsDefinition != null && parallelStepsDefinition.getId() != null) {
+        parallelGateway.setId(parallelStepsDefinition.getId());
+    } else {
+        parallelGateway.setId(conversion.getUniqueNumberedId(PARALLEL_GATEWAY_PREFIX));
+    }
     conversion.getProcess().addFlowElement(parallelGateway);
     return parallelGateway;
   }

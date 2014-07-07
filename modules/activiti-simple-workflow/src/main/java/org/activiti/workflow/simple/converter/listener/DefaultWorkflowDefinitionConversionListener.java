@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.activiti.bpmn.model.Activity;
+import org.activiti.bpmn.model.BoundaryEvent;
 import org.activiti.bpmn.model.EndEvent;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.FlowNode;
@@ -124,6 +126,23 @@ public class DefaultWorkflowDefinitionConversionListener implements WorkflowDefi
       List<SequenceFlow> outgoingSequenceFlow = sequenceFlowMapping.getOutgoingSequenceFlowMapping().get(flowNode.getId());
       if (outgoingSequenceFlow != null) {
         flowNode.setOutgoingFlows(outgoingSequenceFlow);
+      }
+      
+      // Also check boundary events
+      if (Activity.class.isAssignableFrom(flowNode.getClass())) {
+          Activity activity = (Activity) flowNode;
+          List<BoundaryEvent> events = activity.getBoundaryEvents();
+          for (BoundaryEvent event : events) {
+              List<SequenceFlow> eventIncomingSequenceFlow = sequenceFlowMapping.getIncomingSequenceFlowMapping().get(event.getId());
+              if (eventIncomingSequenceFlow != null) {
+                  event.setIncomingFlows(eventIncomingSequenceFlow);
+              }
+
+              List<SequenceFlow> eventOutgoingSequenceFlow = sequenceFlowMapping.getOutgoingSequenceFlowMapping().get(event.getId());
+              if (eventOutgoingSequenceFlow != null) {
+                  event.setOutgoingFlows(eventOutgoingSequenceFlow);
+              }
+          }
       }
     }
   }

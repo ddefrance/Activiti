@@ -34,6 +34,7 @@ public class ParallelStepsDefinition extends AbstractStepListContainer<ParallelS
   
 	protected WorkflowDefinition workflowDefinition;
 	protected Map<String, Object> parameters = new HashMap<String, Object>();
+	protected String parallelParentId;
   
   public ParallelStepsDefinition() {
     
@@ -50,7 +51,17 @@ public class ParallelStepsDefinition extends AbstractStepListContainer<ParallelS
     return workflowDefinition;
   }
   
-  @Override
+ 
+
+public String getParallelParentId() {
+    return parallelParentId;
+}
+
+public void setParallelParentId(String parallelParentId) {
+    this.parallelParentId = parallelParentId;
+}
+
+@Override
   public StepDefinition clone() {
     ParallelStepsDefinition clone = new ParallelStepsDefinition();
     clone.setValues(this);
