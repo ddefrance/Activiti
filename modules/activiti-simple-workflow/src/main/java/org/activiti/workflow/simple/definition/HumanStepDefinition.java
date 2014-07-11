@@ -127,6 +127,8 @@ public class HumanStepDefinition extends AbstractNamedStepDefinition implements 
     setName(stepDefinition.getName());
     setStartsWithPrevious(stepDefinition.isStartsWithPrevious());
     getAssignment().setType(stepDefinition.getAssignmentType());
+    setDueDate(stepDefinition.getDueDate());
+    setPriority(stepDefinition.getPriority());
     
     setParameters(new HashMap<String, Object>(otherDefinition.getParameters()));
   }

@@ -31,8 +31,10 @@ public abstract class AbstractNamedStepDefinition implements StepDefinition, Nam
   private static final long serialVersionUID = 1L;
   
   protected String id;
-	protected String name;
+  protected String name;
+  protected String priority;
   protected String description;
+  protected String dueDate;
   protected boolean startsWithPrevious;
   protected boolean endsParallel;
   protected Map<String, Object> parameters = new HashMap<String, Object>();
@@ -54,7 +56,15 @@ public abstract class AbstractNamedStepDefinition implements StepDefinition, Nam
     this.name = name;
   }
 
-  public String getDescription() {
+  public String getPriority() {
+    return priority;
+}
+
+public void setPriority(String priority) {
+    this.priority = priority;
+}
+
+public String getDescription() {
     return description;
   }
 
@@ -62,7 +72,15 @@ public abstract class AbstractNamedStepDefinition implements StepDefinition, Nam
     this.description = description;
   }
 
-  public boolean isStartsWithPrevious() {
+  public String getDueDate() {
+    return dueDate;
+}
+
+public void setDueDate(String dueDate) {
+    this.dueDate = dueDate;
+}
+
+public boolean isStartsWithPrevious() {
     return startsWithPrevious;
   }
 

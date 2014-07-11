@@ -97,6 +97,12 @@ public class HumanStepDefinitionConverter extends BaseStepDefinitionConverter<Hu
     
     // Boundary Events
     userTask.setBoundaryEvents(convertBoundaryEvents(conversion, userTask, humanStepDefinition.getBoundaryEvents()));
+    
+    // Priority
+    userTask.setPriority(humanStepDefinition.getPriority());
+    
+    // Due Date
+    userTask.setDueDate(humanStepDefinition.getDueDate());
 
     return userTask;
   }
