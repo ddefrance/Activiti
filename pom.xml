@@ -558,6 +558,8 @@
     <module>modules/activiti-process-validation</module>
     <module>modules/activiti-image-generator</module>
     <module>modules/activiti-bpmn-converter</module>
+    <module>modules/activiti-bpmn-layout</module>
+    <module>modules/activiti-simple-workflow</module>
     <module>modules/activiti-engine</module>
   </modules>
 
