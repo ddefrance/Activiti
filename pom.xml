@@ -1010,4 +1010,12 @@
     <connection>scm:git:git@github.com:Activiti/Activiti.git</connection>
     <developerConnection>scm:git:git@github.com:Activiti/Activiti.git</developerConnection>
   </scm>
+  <distributionManagement>
+    <snapshotRepository>
+      <uniqueVersion>true</uniqueVersion>
+      <id>thinkwork-snapshot</id>
+      <name>Thinkwork Snapshots</name>
+      <url>http://ec2-54-165-210-80.compute-1.amazonaws.com:8081/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
