@@ -103,7 +103,10 @@ public class HumanStepDefinitionConverter extends BaseStepDefinitionConverter<Hu
     
     // Due Date
     userTask.setDueDate(humanStepDefinition.getDueDate());
-
+    
+    // Listeners
+    userTask.setTaskListeners(humanStepDefinition.getTaskListeners());
+    
     return userTask;
   }
   

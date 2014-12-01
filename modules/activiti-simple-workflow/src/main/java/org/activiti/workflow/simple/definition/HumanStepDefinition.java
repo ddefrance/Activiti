@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.activiti.bpmn.model.ActivitiListener;
 import org.activiti.workflow.simple.definition.HumanStepAssignment.HumanStepAssignmentType;
 import org.activiti.workflow.simple.definition.form.FormDefinition;
 import org.activiti.workflow.simple.exception.SimpleWorkflowException;
@@ -35,6 +36,7 @@ public class HumanStepDefinition extends AbstractNamedStepDefinition implements 
   
   protected FormDefinition form;
   protected HumanStepAssignment assignment;
+  protected List<ActivitiListener> taskListeners = new ArrayList<ActivitiListener>();
   
   @JsonIgnore
   public HumanStepAssignmentType getAssignmentType() {
@@ -96,7 +98,15 @@ public class HumanStepDefinition extends AbstractNamedStepDefinition implements 
   	return assignment;
   }
 
-  @Override
+public List<ActivitiListener> getTaskListeners() {
+    return taskListeners;
+}
+
+public void setTaskListeners(List<ActivitiListener> taskListeners) {
+    this.taskListeners = taskListeners;
+}
+
+@Override
   public StepDefinition clone() {
     HumanStepDefinition clone = new HumanStepDefinition();
     clone.setValues(this);
