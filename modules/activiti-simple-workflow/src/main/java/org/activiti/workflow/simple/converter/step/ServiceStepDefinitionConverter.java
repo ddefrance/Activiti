@@ -46,8 +46,10 @@ public class ServiceStepDefinitionConverter extends BaseStepDefinitionConverter<
         if (!stepDefinition.isUpdateLastActivity()) {
             conversion.setUpdateLastActivityEnabled(false);
         }
+        
+        boolean addSequenceFlowToLastActivity = stepDefinition.isAddSequenceFlowToLastActivity();
 
-        addFlowElement(conversion, serviceTask, false);
+        addFlowElement(conversion, serviceTask, addSequenceFlowToLastActivity);
 
         if (!stepDefinition.isUpdateLastActivity()) {
             conversion.setUpdateLastActivityEnabled(true);
